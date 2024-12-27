@@ -10,13 +10,18 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PostResolvingHelpService implements PostResolvingHelpUsecase {
 
-//    private final PostPort postPort;
+    private final PostPort postPort;
     private final MetadataPort metadataPort;
 
     @Override
     public ResolvedPost resolvePostById(Long postId) {
-        // TODO
-        return null;
+        return postPort.findById(postId)
+                .map(post -> ResolvedPost.generate(
+                        post,
+                        metadataPort.getUserNameByUserId(post.getUserId()),
+                        metadataPort.getCategoryNameByCategoryId(post.getCategoryId())
+                ))
+                .orElseThrow(RuntimeException:: new);
     }
 
     @Override
