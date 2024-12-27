@@ -10,14 +10,15 @@ import org.springframework.transaction.annotation.Transactional;
 public class PostDeleteService implements PostDeleteUsecase {
 
     private final PostPort postPort;
+    private final OriginalPostMessageProducePort originalPostMessageProducePort;
 
     @Override
     @Transactional
     public Post delete(Request request) {
-        Post deleted = postPort.findById(request.postId())
+        return postPort.findById(request.postId())
                 .map(Post::delete)
+                .map(postPort::save)
+                .map(originalPostMessageProducePort::sendDeleteMessage)
                 .orElseThrow(RuntimeException::new);
-
-        return postPort.save(deleted);
     }
 }

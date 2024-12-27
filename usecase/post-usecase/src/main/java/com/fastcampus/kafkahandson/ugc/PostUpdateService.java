@@ -10,16 +10,19 @@ import org.springframework.transaction.annotation.Transactional;
 public class PostUpdateService implements PostUpdateUsecase {
 
     private final PostPort postPort;
+    private final OriginalPostMessageProducePort originalPostMessageProducePort;
+
     @Override
     @Transactional
     public Post update(Request request) {
-        Post updated = postPort.findById(request.postId())
+        return postPort.findById(request.postId())
                 .map(post -> post.update(
                         request.title(),
                         request.content(),
                         request.categoryId()
                 ))
+                .map(postPort::save)
+                .map(originalPostMessageProducePort::sendUpdateMessage)
                 .orElseThrow(RuntimeException::new);
-        return postPort.save(updated);
     }
 }
