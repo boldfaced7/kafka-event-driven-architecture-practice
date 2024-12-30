@@ -1,4 +1,4 @@
-package com.fastcampus.kafkahandson.ugc.adapter.originpost;
+package com.fastcampus.kafkahandson.ugc.adapter.originalpost;
 
 import com.fastcampus.kafkahandson.ugc.adapter.common.OperationType;
 import lombok.AllArgsConstructor;
@@ -21,8 +21,8 @@ public class OriginalPostMessage {
             String content,
             Long userId,
             Long categoryId,
-            LocalDateTime createdAd,
-            LocalDateTime updatedAd,
-            LocalDateTime deletedAd
+            LocalDateTime createdAt,
+            LocalDateTime updatedAt,
+            LocalDateTime deletedAt
     ) {}
 }

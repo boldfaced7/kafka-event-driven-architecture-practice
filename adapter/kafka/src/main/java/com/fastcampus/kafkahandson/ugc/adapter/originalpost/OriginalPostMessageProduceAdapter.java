@@ -1,4 +1,4 @@
-package com.fastcampus.kafkahandson.ugc.adapter.originpost;
+package com.fastcampus.kafkahandson.ugc.adapter.originalpost;
 
 import com.fastcampus.kafkahandson.ugc.CustomObjectMapper;
 import com.fastcampus.kafkahandson.ugc.OriginalPostMessageProducePort;
@@ -33,12 +33,12 @@ public class OriginalPostMessageProduceAdapter implements OriginalPostMessagePro
     }
 
     private Post sendMessage(Post post, OperationType operationType) {
-        OriginalPostMessage converted = convert(post, operationType);
+        OriginalPostMessage converted = convertToMessage(post, operationType);
         send(converted);
         return post;
     }
 
-    private OriginalPostMessage convert(Post post, OperationType operationType) {
+    private OriginalPostMessage convertToMessage(Post post, OperationType operationType) {
         return new OriginalPostMessage(
                 post.getId(),
                 operationType,
@@ -60,7 +60,7 @@ public class OriginalPostMessageProduceAdapter implements OriginalPostMessagePro
     private void send(OriginalPostMessage message) {
         try {
             kafkaTemplate.send(
-                    Topic.ORIGINAL_TOPIC,
+                    Topic.ORIGINAL_POST,
                     message.getId().toString(),
                     objectMapper.writeValueAsString(message)
             );
