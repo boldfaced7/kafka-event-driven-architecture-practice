@@ -4,7 +4,7 @@ import com.fastcampus.kafkahandson.ugc.CustomObjectMapper;
 import com.fastcampus.kafkahandson.ugc.adapter.common.OperationType;
 import com.fastcampus.kafkahandson.ugc.adapter.common.Topic;
 import com.fastcampus.kafkahandson.ugc.adapter.originalpost.OriginalPostMessage;
-import com.fastcampus.kafkahandson.ugc.handler.OperationHandler;
+import com.fastcampus.kafkahandson.ugc.handler.AutoInspectionHandler;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -18,12 +18,12 @@ import java.util.stream.Collectors;
 @Component
 public class AutoInspectionWorker {
     private final CustomObjectMapper objectMapper = new CustomObjectMapper();
-    private final Map<OperationType, OperationHandler> operationHandlers;
+    private final Map<OperationType, AutoInspectionHandler> operationHandlers;
 
-    public AutoInspectionWorker(List<OperationHandler> list) {
+    public AutoInspectionWorker(List<AutoInspectionHandler> list) {
         operationHandlers = list.stream()
                 .collect(Collectors.toMap(
-                        OperationHandler::getOperationType,
+                        AutoInspectionHandler::getOperationType,
                         Function.identity()
                 ));
     }

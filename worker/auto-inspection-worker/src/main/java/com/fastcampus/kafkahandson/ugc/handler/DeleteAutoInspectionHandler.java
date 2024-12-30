@@ -5,31 +5,26 @@ import com.fastcampus.kafkahandson.ugc.PostInspectUsecase;
 import com.fastcampus.kafkahandson.ugc.adapter.common.OperationType;
 import com.fastcampus.kafkahandson.ugc.adapter.originalpost.OriginalPostMessage;
 import com.fastcampus.kafkahandson.ugc.adapter.originalpost.OriginalPostMessageConverter;
-import com.fastcampus.kafkahandson.ugc.inspectedpost.InspectedPost;
 import com.fastcampus.kafkahandson.ugc.post.model.Post;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class UpdateOperationHandler implements OperationHandler {
+public class DeleteAutoInspectionHandler implements AutoInspectionHandler {
+
     private final PostInspectUsecase postInspectUsecase;
     private final InspectedPostMessageProducePort inspectedPostMessageProducePort;
 
     @Override
     public OperationType getOperationType() {
-        return OperationType.UPDATE;
+        return OperationType.DELETE;
     }
 
     @Override
     public void handle(OriginalPostMessage message) {
         Post received = OriginalPostMessageConverter.toModel(message);
         postInspectUsecase.inspect(received)
-                .ifPresentOrElse(
-                        inspectedPostMessageProducePort::sendUpdateMessage,
-                        () -> inspectedPostMessageProducePort.sendDeleteMessage(
-                                InspectedPost.generateForDelete(received)
-                        )
-                );
+                .ifPresent(inspectedPostMessageProducePort::sendDeleteMessage);
     }
 }

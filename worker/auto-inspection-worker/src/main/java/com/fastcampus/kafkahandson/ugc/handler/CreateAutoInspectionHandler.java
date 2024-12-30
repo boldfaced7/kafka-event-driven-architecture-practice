@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class CreateOperationHandler implements OperationHandler {
+public class CreateAutoInspectionHandler implements AutoInspectionHandler {
 
     private final PostInspectUsecase postInspectUsecase;
     private final InspectedPostMessageProducePort inspectedPostMessageProducePort;
