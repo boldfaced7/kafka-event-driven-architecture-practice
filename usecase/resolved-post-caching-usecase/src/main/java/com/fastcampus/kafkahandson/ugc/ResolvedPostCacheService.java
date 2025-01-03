@@ -1,33 +1,25 @@
 package com.fastcampus.kafkahandson.ugc;
 
-import com.fastcampus.kafkahandson.ugc.aspect.CacheableResolvedPost;
-import com.fastcampus.kafkahandson.ugc.aspect.CacheableResolvedPostList;
 import com.fastcampus.kafkahandson.ugc.post.model.Post;
 import com.fastcampus.kafkahandson.ugc.post.model.ResolvedPost;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class PostResolvingHelpService implements PostResolvingHelpUsecase {
+public class ResolvedPostCacheService implements ResolvedPostCacheUsecase {
 
-    private final PostPort postPort;
     private final MetadataPort metadataPort;
+    private final ResolvedPostCachePort resolvedPostCachePort;
 
     @Override
-    @CacheableResolvedPost(key = "#postId")
-    public ResolvedPost resolvePostById(Long postId) {
-        return postPort.findById(postId)
+    public void save(Post post) {
+        Optional.ofNullable(post)
                 .map(this::generateResolvedPost)
-                .orElseThrow(RuntimeException::new);
-    }
+                .ifPresent(resolvedPostCachePort::set);
 
-    @Override
-    @CacheableResolvedPostList(keys = "#postIds")
-    public List<ResolvedPost> resolvePostsByIds(List<Long> postIds) {
-        return postIds.stream().map(this::resolvePostById).toList();
     }
 
     private ResolvedPost generateResolvedPost(Post post) {
