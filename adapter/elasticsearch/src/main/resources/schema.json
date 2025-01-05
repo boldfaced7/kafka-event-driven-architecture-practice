@@ -1,0 +1,33 @@
+{
+  "settings": {
+    "index": {
+      "number_of_shards": 1,
+      "number_of_replicas": 0
+    }
+  },
+  "mappings": {
+    "properties": {
+      "id": {
+        "type": "long"
+      },
+      "title": {
+        "type": "text",
+        "analyzer": "english"
+      },
+      "content": {
+        "type": "text",
+        "analyzer": "english"
+      },
+      "categoryName": {
+        "type": "keyword"
+      },
+      "tags": {
+        "type": "keyword"
+      },
+      "indexedAt": {
+        "type": "date",
+        "format": "date_optional_time||epoch_millis"
+      }
+    }
+  }
+}

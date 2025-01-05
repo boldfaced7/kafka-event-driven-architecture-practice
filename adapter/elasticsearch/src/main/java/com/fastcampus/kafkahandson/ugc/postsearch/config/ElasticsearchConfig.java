@@ -25,20 +25,31 @@ public class ElasticsearchConfig {
     private Integer esPort;
 
     @Bean
-    public RestClient getRestClient() {
-        final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+    public RestClient restClient() {
         return RestClient.builder(new HttpHost(esHost, esPort))
-            .setHttpClientConfigCallback(httpClientBuilder -> {
-                httpClientBuilder.disableAuthCaching();
-                httpClientBuilder.setDefaultHeaders(
-                    List.of(
-                        new BasicHeader(HttpHeaders.CONTENT_TYPE, "application/json")
-                    )
-                );
-                httpClientBuilder.addInterceptorLast((HttpResponseInterceptor)
-                    (response, context) -> response.addHeader("X-Elastic-Product", "Elasticsearch")
-                );
-                return httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
-            }).build();
+                .setHttpClientConfigCallback(builder -> builder
+                        .disableAuthCaching()
+                        .setDefaultHeaders(getDefaultHeaders())
+                        .addInterceptorLast(getResponseInterceptor())
+                        .setDefaultCredentialsProvider(getCredentialsProvider()))
+                .build();
+    }
+
+    private List<BasicHeader> getDefaultHeaders() {
+        return List.of(new BasicHeader(
+                HttpHeaders.CONTENT_TYPE,
+                "application/json"
+        ));
+    }
+
+    private HttpResponseInterceptor getResponseInterceptor() {
+        return (response, context) -> response.addHeader(
+                "X-Elastic-Product",
+                "Elasticsearch"
+        );
+    }
+
+    private CredentialsProvider getCredentialsProvider() {
+        return new BasicCredentialsProvider();
     }
 }
